@@ -1,0 +1,724 @@
+\documentclass[11pt]{article}
+%\usepackage[portuguese]{babel}
+\usepackage{natbib}
+\usepackage{url}
+%\usepackage[utf8x]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\graphicspath{{images/}}
+\usepackage{parskip}
+\usepackage{fancyhdr}
+\usepackage{vmargin}
+\setmarginsrb{3 cm}{2.5 cm}{3 cm}{2.5 cm}{1 cm}{1.5 cm}{1 cm}{1.5 cm}
+
+\title{Linear Regression}								% Title
+\author{Huong Tran}								% Author
+\date{\today}											% Date
+
+\makeatletter
+\let\thetitle\@title
+\let\theauthor\@author
+\let\thedate\@date
+\makeatother
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\theauthor}
+\lhead{\thetitle}
+\cfoot{\thepage}
+
+%%Display math style everywhere
+\everymath{\displaystyle}
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\newtheorem{ex}{Example}[section]
+\newtheorem{thm}{Theorem}[subsection]
+\newtheorem{df}{Definition}[section]
+\newtheorem{remark}{Remark}[subsection]
+%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+	
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	\begin{titlepage}
+		\centering
+		\vspace*{0.5 cm}
+		% \includegraphics[scale = 0.75]{logo.png}\\[1.0 cm]	% University Logo
+		\textsc{\LARGE \newline\newline Oakland University }\\[0.5 cm]	% University Name
+		\textsc{\Large Department of Mathematics and Statistics}\\[0.5 cm]	
+		\textsc{}
+		\rule{\linewidth}{0.2 mm} \\[0.4 cm]
+		{ \huge \bfseries \thetitle} \\
+		
+		\rule{\linewidth}{0.2 mm} \\[1.5 cm]
+		
+
+		\theauthor
+		
+		\thedate
+		
+		
+		
+		
+	\end{titlepage}
+	
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	\tableofcontents
+	\pagebreak
+	
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\section{Preliminary: }
+	\subsection{Basic Calculations: }
+	\begin{df}[\textbf{Joint pdf}]
+		
+	\end{df}
+	\begin{df}[\textbf{Conditional pdf}]
+ 		$$f(y|x) = \dfrac{f(x, y)}{f_X(x)} $$ 
+	\end{df}
+\begin{df}[Independence]j $X$ and $Y$ are called independent variables if 
+	$$f(x, y) = f_X(x) f_Y(y) $$
+\end{df}
+In this event, we derive that: 
+$$f(y |x) = f_Y(y)$$
+and moreover
+$$E\bigg(g(x) h(Y)\bigg) = Eg(X) Eh(Y) $$
+	\begin{thm}
+	If $X$ and $Y$ are two random variables, then
+	$$EX = E \big(E(X|Y)\big) $$ and
+	$$ \text{Var}(X) = E\big(\text{Var}(X|Y)\big) + \text{Var}(E(X|Y)) $$
+	\end{thm}
+	\begin{df}[\textbf{Covariance}]
+		$$\text{Cov}(X, Y) = E \big((X - \mu_X) (Y - \mu_Y)\big) = EXY - \mu_X \mu_Y$$
+	\end{df}
+Note that: If $X$ and $Y$ are independent random variables, then $\text{Cov}(X, Y) = 0$
+\begin{df}[\textbf{Correlation}]
+	$$\rho_{XY} = \dfrac{\text{Cov}(X, Y)}{\sigma_X \sigma_Y}$$
+\end{df}
+\begin{thm} [\textbf{Sum of normally distributed variables}]
+	Let $X_1, \dots X_n$ be mutually independent random variables with $X_i \sim N(\mu_i, \sigma_i^2)$. Then 
+	$$Z = \sum_{ i = 1}^n \big(a_iX_i + b_i\big) \sim N\left(\sum_{ i = 1}^n a_i\mu_i + b_i, \sum_{i = 1}^n a_i^2 \sigma_i^2\right) $$
+\end{thm}
+\begin{thm}[\textbf{Independence criteria}] $X_1 \dots X_n$ are mutually independent variables if and only if there exists functions $g_i(x_i), i = 1, 2 \dots n $ such that
+	$$f(x_1, \dots, x_n) = \prod_{i = 1}^{n} g_i(x_i) $$
+\end{thm}
+\begin{thm}
+	Let $X_1, \dots, X_n$ be random sample from a population with mean $\mu$ and variance $\sigma^2 < \infty$.Then 
+	$$E\bar{X} =\mu \hspace*{2.0cm } \text{Var}(\bar{X}) = \dfrac{\sigma^2}{n} \hspace*{2.0 cm} ES^2 = \sigma^2 $$
+\end{thm}
+\begin{thm}
+	If  $X_1, \dots X_n \sim N(\mu, \sigma^2)$, then $\bar{X}$ and $S^2$ are independent and: 
+	$$\bar{X} \sim N\left(\mu, \dfrac{\sigma^2}{n}\right) \hspace{2.0 cm } \dfrac{(n - 1)S^2}{\sigma^2} \sim \chi^2_{n - 1} $$ 
+\end{thm}
+\begin{thm}[\textbf{Facts about variables transformation}]  \label{thm: properties}The following are useful:
+	\begin{enumerate}
+		\item $Z \sim N(0, 1)$ then $Z^2 \sim \chi_1^2$.
+		\item  Let $X_1, \dots X_n$ are random independent variables$X_i \sim \chi^2_{p_i}$, then $\sum_{i = 1}^n X_i \sim \chi^2_{p_1 +\dots p_n}$
+		\item If $U \sim N(0, 1)$ and $V \sim \chi^2_p$ are independent , then $T = \dfrac{U}{\sqrt{\frac{V}{p}}} \sim t_p$.
+		\item If $U \sim \chi^2_p$ and $V \sim \chi^2_q$, then  $\dfrac{U/p}{V/q} \sim F_{p -1, q - 1}$
+		\item If $X \sim t_q$ then $X^2 \sim F_{1, q}$
+		\item If $X \sim F_{p, q}$ then $\dfrac{1}{X} \sim F_{q, p}$
+		\item A vector $U \sim N(\mu, \Sigma)$, then $AU \sim N(A \mu, A \Sigma A')$
+	\end{enumerate}
+	
+\end{thm}
+	\section{Analysis of Variance (ANOVA): One way  }
+	 Basic idea of the ANOVA, that of partitioning variation, is a fundamental idea of experimental statistics. Note, it is not concerned with analyzing the variances, but rather with analyzing the \textbf{variation in the means}.
+	 
+	 In its simplest form, ANOVA is a method of estimating the \textbf{means} of several populations (usually assumed to be normally distributed). 
+	 
+	 In the oneway ANOVA, we assumed that data $Y_{ij}$ are observed according to the model
+	 $$Y_{ij} = \theta_i + \epsilon_{ij}, i = 1, \dots k, j = 1 \dots n $$
+	 where $\theta_i$ are unknown and $\epsilon_{ij}$ are error random variables. 
+	 \begin{ex}[\textbf{Oneway ANOVA}] 
+	 	The data from oneway ANOVA table of $k$  treatments ($k$ levels) and $n$ observation will look like this: 
+	 \begin{center}
+	 		\begin{tabular}{ccccc}
+	 		\hline
+	 		&  &Treatments \\ 
+	 		1 & 2 & 3 & \dots & k \\
+	 		\hline
+	 		$y_{11} $& $y_{21} $& $y_{31} $& \dots & $y_{k1}$ \\
+	 		$y_{12}$ & $y_{22}$ & $y_{32}$ & \dots & $y_{k2}$ \\
+	 		\dots & \dots & \dots &  \dots & \\
+	 		$y_{1n}$ & $y_{2n} $ & $y_{3n}$ & \dots & $y_{kn}$ \\
+	 		\hline
+
+	 	\end{tabular}
+	 \end{center}
+	Note that the number of observation in each treatment groups are not necessarily equal.
+	 \end{ex}
+
+Without loss of generality, we can assume that $ E\epsilon_{ij} = 0$, since if not, we can rescale the $\epsilon_{ij}$ an absorb the leftover mean into $\delta_{ij}$. Thus it follows that
+$$EY_{ij} = \theta_i $$
+so $\theta_i$ is the \textbf{mean } of $Y_{ij}$, i.e, it is the mean of level  $i^{th}$ of the treatment. 
+\subsection{Model and Distribution Assumption: }
+For the estimation to be done, we assumed that $E\epsilon_{ij} = 0$ and $\text{Var}\epsilon_{ij} < \infty$ for all $i, j$. For the confidence interval estimation, we need a distributional assumption. 
+
+Then, oneway ANOVA assumptions are:
+\begin{itemize}
+	\item $E\epsilon_{ij} = 0, \text{Var}\epsilon_{ij} = \sigma_i^2 < \infty$ for all $i, j$. And $\text{Cov}(\epsilon_{ij}, \epsilon_{i'j'}) = 0$, for all $i, i',j , j'$.
+	\item The $\epsilon_{ij}$ are independent and normally distributed (\textbf{normal error}).
+	\item $\sigma^2 = \sigma, \forall i $ (Equality of variance, also called \textbf{homoscedasticity})
+\end{itemize}
+For short: \textit{Error random variable in each level of the treatment are identically independent distributed, with mean of 0 and equal variance}.
+
+Note that, the assumption of normal distribution is not a must, but it is more convenient for the interval estimation. The assumption of equal variance is quite important. In fact, the robustness of the ANOVA to the assumption of normality depends on how equal the variances are. 
+\subsection{The classic ANOVA Hypothesis: } 
+The classic ANOVA Hypothesis is a test of the null hypothesis:
+$$ \begin{cases}
+	H_0: & \theta_1 = \theta_2 \dots = \theta_k  \\
+	H_a: & \theta_i \neq \theta_j, \text{ for some } i, j
+\end{cases}$$
+However, it is not very interesting, when the experimenter is sure that there must be a difference between his treatments. Instead, we usually want to figure out which treatments are better. If $H_0$ is rejected, we can conclude only that there is \textit{ some } difference in the mean of treatments, but we can make no inference as to where this difference might be. 
+
+\begin{thm} \label{thm: 11.2.5}
+	Let $\theta = \big(\theta_1, \theta_2, \dots \theta_k \big)$ be arbitrary parameters. Then 
+	$$\theta_1 = \theta_2 = \dots = \theta_k \Leftrightarrow \sum_{i = 1}^k a_i \theta_i = 0 $$
+ as long as  $\sum_{i = 1}^k a_i = 0$,  in this situation, $ \sum_{i = 1}^k a_i \theta_i $ is called \textbf{contrasts}.
+\end{thm}
+By this theorem, the ANOVA null can be expressed as
+$$\begin{cases}
+	H_0: & \sum_{i = 1}^k a_i \theta_i = 0 \text{ for all } (a_1, \dots, a_k) \text{ such that } \sum_{i = 1}^k a_i = 0 \\
+	H_1: & \sum_{i = 1}^k a_ i \theta_i \neq 0 \text{ for some } (a_1, \dots a_k ) \text{ such that } \sum_{i = 1}^k a_i = 0
+\end{cases} $$
+We derived thinking in a univariate manner.
+
+\subsection{Inferences Regarding Linear Combinations of Means: }
+Using the assumption of ANOVA, we have
+$$\epsilon_{ij} \sim N(0, \sigma^2) $$
+then $$Y_{ij} = \theta_i + \epsilon_{ij} \sim N(\theta_i, \sigma^2), \forall i = 1, 2 \dots k, j = 1,2 \dots n_i$$
+Therefore
+$$\bar{Y}_{i\cdot} = \dfrac{1}{n_i} \sum_{j = 1}^{n_i} Y_{ij} \sim N \left( \theta_i, \dfrac{\sigma^2}{n_i}\right), \forall i = 1, 2 \dots k $$
+
+Then, $\sum_{i = 1}^{k} a_i \bar{Y}_{i\cdot} $ is normal, with 
+$$E\left(\sum_{i = 1}^{k}a_i \bar{Y}_{i\cdot}\right) = \sum_{i = 1}^k a_i \theta_i  \text{ and } \text{Var}\left(\sum_{i = 1}^{k} a_i \bar{Y}_{i\cdot}\right) = \sigma^2 \sum_{ i = 1}^k \dfrac{a_i^2}{n_i}$$
+Therefore
+$$\dfrac{\sum_{i = 1}^{k} a_i \bar{Y}_{i\cdot} -  \sum_{i = 1}^k a_i \theta_i }{\sqrt{\sigma^2 \sum_{ i = 1}^k \dfrac{a_i^2}{n_i}}} \sim N(0, 1) $$
+	In fact, we don't know about $\sigma^2$, and using an estimator of $\sigma^2$ would be easier
+Using the fact that 
+$$ Y_{ij} \sim (\theta_i, \sigma^2)$$
+ we derive
+	$$S_i^2 = \dfrac{1}{n_i - 1} \sum_{j = 1}^{n_i} \left(Y_{ij} - \bar{Y}_{i \cdot}\right), \forall i = 1, 2 \dots k  $$
+is an estimator of $\sigma^2$ and 
+$$\dfrac{(n_i - 1)S_i^2}{\sigma^2} \sim \chi^2_{n_i - 1} $$
+And 
+$$\dfrac{1}{\sigma^2} \sum_{ i = 1}^k (n_i - 1)S_i^2 =\sum_{ i = 1}^k \dfrac{(n_i - 1)S_i^2}{\sigma^2}  \sim 
+\chi_{N - k}, \text{ where } N = \sum_{i = 1}^k n_i$$
+Let  $$S_p^2 = \dfrac{1}{N- k} \sum_{i = 1}^k \big(n_i - 1\big)S_i^2 $$
+which is a better estimator of $\sigma^2$ and also $\dfrac{(N- k) S_p^2}{\sigma^2} \sim \chi_{N - k}^2$ 
+Thus
+ $$\dfrac{\sum_{ i = 1}^k a_i \bar{Y}_{i \cdot} - \sum_{i = 1}^k a_i \theta_i}{\sqrt{S_p^2 \sum_{ i = 1}^k \frac{a_i^2}{n_i}}} = \dfrac{\dfrac{\sum_{i = 1}^{k} a_i \bar{Y}_{i\cdot} -  \sum_{i = 1}^k a_i \theta_i }{\sqrt{\sigma^2 \sum_{ i = 1}^k \dfrac{a_i^2}{n_i}}}}{\sqrt{\dfrac{1}{N - k} \dfrac{(N- k) S_p^2}{\sigma^2}}}   \sim t_{N- k}$$
+Now, back to our test 
+$$ \begin{cases}
+	H_0: & \sum_{i = 1}^k a_i \theta_i = 0 \\
+	H_1: & \sum_{i = 1}^k a_i \theta_i \neq 0 
+\end{cases} $$ at level $\alpha$. 
+Rejection region is $$\left| \dfrac{\sum_{i = 1}^k a_i \bar{Y}_{i \cdot}}{\sqrt{S_p^2 \sum_{i = 1}^k \frac{a_i^2}{n_i}}} \right| > t_{N-k, \alpha/2} $$
+\begin{ex}
+	Choosing $a = (1, - 1, 0 , \dots, 0)$, we are able to test $$\begin{cases}
+		H_0:& \theta_1 = \theta_2 \\H_1: & \theta_1 \neq \theta_2
+	\end{cases} $$ and the rejection region is 
+$$\left|\dfrac{\bar{Y}_{1\cdot} - \bar{Y}_{2 \cdot}}{\sqrt{s_p^2 \left(\dfrac{1}{n_1} + \dfrac{1}{n_2} \right)}} \right| > t_{N - k, \alpha/ 2} $$ The difference between this test and two-sample $t$-test is  that here we used the information of all treatments, including $3, \dots, k$ to estimate $\sigma^2$. By choosing $a_i$ such that $\sum_{ i = 1}^k a_i = 0$, we obtain several tests to compare the mean of treatments. 
+\end{ex}
+\subsection{The ANOVA F-test: }
+Recall the ANOVA hypothesis is:
+$$\begin{cases}
+	H_0: & \sum_{i = 1}^k a_i \theta_i = 0 \text{ for all } (a_1, \dots, a_k) \in \mathcal{A} \\
+	H_1: & \sum_{i = 1}^k a_ i \theta_i \neq 0 \text{ for some }  (a_1, \dots, a_k) \in \mathcal{A}
+\end{cases} $$
+where $$\mathcal{A} = \left\{(a_1, \dots, a_k): \sum_{i = 1}^k a_i = 0\right\} $$
+To see this more clearly as a union-intersection test, define
+$$\Theta_a = \left\{ \theta = (\theta_1, \dots, \theta_k): \sum_{ i = 1}^k \theta_i a_i = 0
+\right\} $$
+Then, \ref{thm: 11.2.5} derive that
+$$\theta_1 = \dots = \theta_k \Leftrightarrow \theta \in \bigcap_{a \in \mathcal{A}} \Theta_a $$
+Then, the ANOVA test can be written as
+$$\
+	H_0: \theta \in \bigcap_{a \in \mathcal{A}} \Theta_a 
+$$ we would reject $H_0$ if we can reject 
+$$\begin{cases}
+	H_{0a}: \theta \in \Theta_a \\
+	H_{1a}: \theta \notin \Theta_a 
+\end{cases} \text{ for any } a \in \mathcal{A}$$
+To test $H_{0a}$, we use the test statistic 
+$$T_a =  \left| \dfrac{\sum_{ i = 1}^k a_i \bar{Y}_{i \cdot} - \sum_{i = 1}^k a_i \theta_i}{\sqrt{S_p^2 \sum_{ i = 1}^k \frac{a_i^2}{n_i}}}   \right|$$ with rejection $T_a > k$, for some constant $k$.  We would reject for any $a$, which means that, if we could reject for $\sup_{a}T_a > k$. Therefore, find the $\sup_{a} T_a$ would be helpful for this union-intersection test.  And maximizing $T_a$ is equivalent to maximizing $T_a^2$:
+$$T_a^2 = \dfrac{\left(\sum_{i = 1}^k a_i\big(\bar{Y}_{i\cdot}  - \theta_i \big)\right)^2}{S_p^2 \sum_{i = 1}^k \frac{a_i^2}{n_i}} $$
+And we know that $T_a \sim t_{N - k}$, then $T_a^2 \sim F_{1, N- k}$
+\begin{thm} \label{thm:  F_stat}
+	$$\sup_{a \in \mathcal{A}} T_a^2 = \dfrac{\sum_{i = 1}^k n_i \bigg( \big(\bar{Y}_{i \cdot} - \bar{\bar{Y}}\big) - \big(\theta_i - \bar{\theta }\big) \bigg)^2}{S_p^2} $$
+	Furthermore, ANOVA assumption derive that $$\sup_{a \in\mathcal{A}} T_a^2 \sim (k - 1) F_{k - 1, N- k}  $$
+\end{thm}
+Theorem \ref{thm:  F_stat} deduce  the rejection region of ANOVA test is 
+$$ F =  \dfrac{\frac{\sum_{i = 1}^k n_i \bigg( \big(\bar{Y}_{i \cdot} - \bar{\bar{Y}}\big) \bigg)^2}{k - 1}}{S_p^2} > F_{k-1, N-k, \alpha}$$ 
+
+\section{Simple Linear Regression: }
+\subsection{Introduction: } 
+In simple linear regression we have a relationship of the form:
+\begin{equation} \label{eq: 11.3.1}
+	Y_i = \alpha + \beta x_i + \epsilon_i, i = 1, \dots n
+\end{equation}
+where $Y_i$ is a random variable (response) and $x_i$ is another observable variable (predictor). $\alpha$ is called \textit{intercept} while $\beta$ is the \textit{slope} of the regression and $\epsilon_i$ is supposed to be random with $E\epsilon_i = 0$.We have
+\begin{equation} \label{eq: 11.3.2}
+	EY_i = \alpha + \beta x_i
+\end{equation}
+To keep straight the fact that inference about the relationship between $Y_i$ and $x_i$ assume knowledge of $x_i$, we could write \ref{eq: 11.3.2} as 
+\begin{equation} \label{eq: 11.3.3}
+	E(Y_i|x_i) = \alpha + \beta x_i
+\end{equation}
+Note that, the term \textit{linear regression } refers to a specification that is \textit{linear in the parameters}. Thus, the specifications $E(Y_i|x_i) = \alpha + \beta x_i^2$ is also \textit{linear regression} while $E(Y_i|x_i) = \alpha + \beta^2 x_i$ is not linear regression.
+
+When we do a regression analysis, we are investigating the relationship between the response $Y$ and the predictor $X$. There are 2 steps to do this analysis:
+\begin{itemize}
+	\item Step 1: is data-oriented, in which we try to observe the data. Suppose we have $n$ pairs of data points $(x_1, y_1), \dots, (x_n, y_n)$ 
+	\begin{enumerate}
+		\item The sample means are:
+		\begin{equation} \label{eq: means}
+			\bar{x}  = \dfrac{1}{n} \sum_{ i = 1}^n x_i \hspace*{ 2.0cm} \bar{y} = \dfrac{1}{n} \sum_{i = 1}^n y_i 
+		\end{equation}
+		\item The sum of squares are:
+		\begin{equation}\label{eq: SSQ}
+			S_{xx} = \sum_{i = 1}^n (x_i - \bar{x})^2 \hspace*{2.0 cm} S_{yy} = \sum_{i = 1}^n (y_i - \bar{y})^2
+		\end{equation}
+		\item The sum of cross-products is:
+		\begin{equation}\label{eq: SCP}
+			S_{xy} = \sum_{i = 1}^n (x_i - \bar{x})(y_i - \bar{y})
+		\end{equation}
+	
+	\end{enumerate}
+	\item Step 2: is statistical, which which we try to make inference about the relationship of response and predictor. To do this, we need  some assumptions about the population. Different assumptions will lead to different models.
+\end{itemize}
+\subsection{Data for Regression Analysis: }
+\begin{enumerate}
+	\item \textbf{Observational Data: } obtained from \textbf{nonexperimental studies}, which do not control the response or predictor variables. A major limitation of observational data is that they often do not provide adequate information about cause-and-effect relationships. 
+	
+	For example, a positive relation between age of employee and number of days of illness in the company personnel example may not imply that the number of days of illness is the direct result of age.
+	
+	\item \textbf{Experimental Data: } data was collected with the values of $x$'s set in advance of observing $y$ (i.e value of $x$ are controlled).
+	
+	The procedure for selecting sample data with the $x$'s set in advance is called the \textbf{design of the experiment}. The statistical procedure for comparing the population means is called an \textbf{analysis of variance}.
+	
+	\item \textbf{Completely Randomized Design: }
+\end{enumerate}
+\subsection{Least Squares Model: }
+When we fit $x_i$ into our model, $\alpha + \beta x_i$ is the predicted value for $y_i$ for $i = 1,\dots n$, the \textit{residual sum of squares (SSE)} is defined as follow 
+\begin{equation}\label{eq: RSS}
+	\text{SSE} = \sum_{i = 1}^n \big(y_i - (\alpha + \beta x_i )\big)^2
+\end{equation}
+In fact, we want RSS to be as small as possible. The \textit{least squares estimates } of $\alpha$ and $\beta$ is defined so that $\alpha$ and $\beta$ minimizes RSS, i.e:
+$$\min_{\alpha, \beta}   \sum_{i = 1}^n \big(y_i - (\alpha + \beta x_i )\big)^2$$
+Solving the optimization problem, we obtain 
+\begin{equation} \label{eq: LS}
+	\hat{\beta} = \dfrac{S_{xy}}{S_{xx}}  \hspace*{2.0cm} \hat{\alpha}= \bar{y} - \hat{\beta}\bar{x}
+\end{equation}
+Please note that, at this step, the \textit{least squares method} is considered as a method of "fitting data point" to a set of data, not a method of statistical inference. Because, until now, we have no basis for constructing confidence intervals or testing hypothesis. 
+
+\subsection{A Statistical Solution: }
+Now, we will show that the estimate of $\alpha$ and $\beta$ in \ref{eq: LS} are optimal in the class of linear unbiased estimates under a fairly general statistical model. Recall the linear relationship we assumed between $x$ and $y$  is:
+$$ Y_i = \alpha + \beta x_i, + \epsilon_i  \text{ with } E\epsilon_i = 0, i = 1, \dots n $$ 
+now, we also assume that 
+$$\text{Var}(\epsilon_i) = \sigma^2, i = 1, \dots n  $$
+which means that all the $\epsilon_i$s have the same but unknown variance. But, we do not need specify a probability distribution for them.
+
+Recall that an linear  estimator of $\beta$ must be as the form 
+$$\sum_{i = 1}^n d_i Y_i, \text{ where } d_i \text{ are constant } $$
+And an linear unbiased estimator of $\beta$ must satisfy:
+ $$E(\sum_{i = 1}^n d_i Y_i) = \beta $$
+ i.e 
+ $$ \beta = \alpha \left(\sum_{i = 1}^n d_i\right) +\beta \left( \sum_{ i = 1}^n d_i x_i\right) $$
+ Which implies that constant $d_i$ must satisfy:
+ $$ \sum_{i = 1}^n d_i = 0 \text{ and } \sum_{i = 1}^n d_i x_i = 1$$
+Under above assumption, we can show that 
+$$E\hat{\beta} = \beta \text{ and } E\hat{\alpha} = \alpha $$
+Recall that 
+$$\hat{\beta } = \dfrac{S_{xy}}{S_{xx}} = \sum_{i = 1}^n \dfrac{(x_i - \bar{x})(y_i -\bar{y})}{S_{xx}} = \sum_{i = 1}^n \dfrac{(x_i -\bar{x})}{S_{xx}} y_i  $$ 
+and $$d_i = \dfrac{x_i - \bar{x}}{S_{xx}} $$ satisfy condition. Therefore $\hat{\beta}$ is a linear unbiased estimator of $\beta$. 
+Moreover, it has smallest variance among all linear unbiased estimators. Similarly, we can show that $\hat{\alpha}$ is the best linear unbiased estimator of $\alpha$.
+\subsection{Models and Distribution Assumptions: }
+Until now, we have passed through  two steps:
+\begin{enumerate}
+	\item Solving mathematical solution for $\alpha$ and $\beta$ to minimize the residual sum of squares, with assumption of $E\epsilon_i = 0, i = 1, 2 \dots n $
+	\item Proved that $\hat{\alpha}$ and $\hat{\beta}$ found in the first step is the best linear unbiased estimator for $\alpha$ and $\beta$, under the assumption that $\text{Var}(\epsilon_{i}) = \sigma^2, i = 1,2 \dots$
+\end{enumerate}
+but we still can not derive any tests or confidence interval under this model, because the model does not specify enough about the probability distribution of the data. For further inference, we can assume that random error $\epsilon_i \sim N(0, \sigma^2), i = 1, \dots n$. Which then implies that 
+$$Y_i \sim N(\alpha + \beta x_i, \sigma^2) , i = 1, \dots n $$
+Define the \textit{residuals from the regression} as follow:  
+\begin{equation} \label{eq: residuals}
+	\hat{\epsilon} = Y_i - \big( \hat{\alpha} + \hat{\beta } x_i\big), i = 1, \dots n
+\end{equation} 
+
+\begin{thm}
+	An unbiased estimator for $\sigma^2$ is 
+	$$S = \dfrac{1}{n - 2} \sum_{i = 1}^n \hat{\epsilon}_i^2$$
+\end{thm}
+\begin{thm} \label{thm: param dist}
+	Under the above assumptions, we have
+	$$\hat{\alpha} \sim N\left(\alpha, \dfrac{\sigma^2}{n S_{xx}}  \sum_{i = 1}^n x_i^2\right) \text{ and } \hat{\beta } \sim N\left(\beta, \dfrac{\sigma^2}{S_{xx}}\right) $$
+	with
+	$$\text{Cov}(\hat{\alpha}, \hat{\beta }) = \dfrac{-\sigma^2\bar{x}}{S_{xx}} $$
+	Furthermore, $\left(\hat{\alpha}, \hat{\beta }\right)$ and $S^2$ are independent and 
+	$$ \dfrac{(n - 2)S^2}{\sigma^2} \sim \chi^2_{n - 2} $$
+\end{thm}
+In fact, the variance $\sigma^2$ is unknown, and using normal distribution to make inference about $\hat{\alpha}$ and $\hat{\beta }$ is impossible. Instead, we use $S^2$ to estimate $\sigma^2$ and inference regrading to $\alpha$ and $\beta$ are based on the following $t$-distribution:
+$$ \dfrac{\hat{\alpha} - \alpha}{\sqrt{S\big(\sum_{i = 1}^n x_i^2\big) / \big(nS_{xx}\big)}}  ~ \sim t_{n - 2} \text{ and } \dfrac{\hat{\beta} - \beta}{S/\sqrt{S_{xx}}} ~ \sim t_{n - 2}$$
+This  result is immediately from theorem  \ref{thm: param dist}.
+\subsection{Interpretation of $\beta$: }
+Value $x= 0$ may not be a reasonable value for predictor variable, therefore $\alpha$ may not be an interest. However, $\beta$ is the \textbf{rate of change of $E(Y|x)$} as a function of $x$. That is, $\beta$ is the amount that $E(Y|x)$ changes if $x$ is changed by one unit. Thus, this parameter contains the information about whatever linear relationship exists between $Y$ and $x$. 
+
+The rejection region at level $\alpha$ for the following test 
+$$\begin{cases}
+	H_0: & \beta = 0 \\ H_1: & \beta \neq 0 
+\end{cases}$$
+is 
+\begin{equation} \label{eq: beta-t}
+	\left|\dfrac{\hat{\beta }}{S / \sqrt{S_{xx}}}\right| > t_{n - 2, \alpha/2}
+\end{equation}
+which is equivalent  to 
+$$ \dfrac{\hat{\beta }^2}{S^2 / S_{xx}} > F_{1, n - 2, \alpha} $$
+We have
+$$\dfrac{\hat{\beta }^2}{S^2 / S_{xx}} = \dfrac{S_{xy}^2}{S_{xx}^2 } \dfrac{S_{xx}}{\text{SSE} / (n - 2)} =  \dfrac{S_{xy}^2 / S_{xx}}{\text{SSE} / (n - 2)} = \dfrac{\sum_{i = 1}^n (\hat{y}_i - \bar{y})^2}{\text{SEE}/(n - 2)} = \dfrac{\text{Sum of square of model}}{\text{Sum of square of errors / \text{df}}}$$
+The last equality can be derived by showing 
+$$\dfrac{S_{xy}^2}{S_{xx}} = \sum_{i = 1}^n (\hat{y}_i - \bar{y})^2$$
+In fact 
+\begin{align*}
+	S_{xx} \sum_{i = 1}^n(\hat{y}_i - \bar{y})^2 & = S_{xx} \sum_{i = 1}^n (\hat{\beta} x_i + \hat{\alpha} - \bar{y})^2 \\
+	& = S_{xx} \sum_{i = 1}^2 (\hat{\beta }x_i - \hat{\beta } \bar{x})^2 \\
+	& = S_{xx} \hat{\beta}^2 \sum_{i = 1}^n (x_i - \bar{x})^2 \\
+	& = S_{xx} \hat{\beta}^2S_{xx} = S_{xy}^2
+\end{align*}
+Therefore, $F$-statistic for our tests can be computed as 
+$$F = \dfrac{\hat{\beta}^2}{S^2 / S_{xx}} = \dfrac{\text{Regression sum of square}}{\text{Residual sum of square} / \text{df}} = \dfrac{\text{MSM}}{\text{MSE}}$$
+Moreover, using the fact that $\hat{y}_i = \hat{\alpha} + \hat{\beta } x_i, i = 1 , \dots n$ and $ \hat{\alpha} = \bar{y} - \hat{\beta } \bar{x}$, we have: 
+\begin{align*}
+	\sum_{i = 1}^n (y_i  - \hat{y}_i)(\hat{y}_i  - \bar{y}) & =  \sum_{i = 1}^n (y_i - \hat{\alpha} - \hat{\beta} x_i)( \hat{\alpha} + \hat{\beta} x_i - \bar{y}) \\
+	& = \sum_{i = 1}^n \big(y_i - \bar{y} - \hat{\beta }(x_i - \bar{x})\big)(\hat{\beta} x_i - \hat{\beta } \bar{x})\\ 
+	& = \hat{\beta}\sum_{i = 1}^n (y_i - \bar{y})(x_i - \bar{x})  - \hat{\beta}^2 \sum_{i = 1}^n (x_i - \bar{x})^2 \\
+	& = \hat{\beta} S_{xy} - \hat{\beta}^2 S_{xx} \\
+	& = \dfrac{S_{xy}^2}{S_{xx}} - \dfrac{S_{xy}^2}{S_{xx} } \\ 
+	&= 0
+\end{align*}
+Which then implies the partition of the total sum of square:
+\begin{align}\label{eq: SST}
+		\sum_{i = 1}^n(y_i - \bar{y})^2 & = \sum_{i = 1}^2 (y_i - \hat{y}_i)^2 + \sum_{i = 1}^n(\hat{y}_i - \bar{y})^2  \\
+		\text{SST} & = \text{SSE} + \text{SSM}
+\end{align}
+\textbf{Regression ANOVA table: }The formulas of how we derive test statistic is summarized in table \ref{table: Reg-ANOVA}.
+\begin{table}
+	\centering
+	\begin{tabular}{c c c c c } 
+		\hline
+		Sum of variation & df & Sum of squares & Mean square & F statistic \\
+		\hline
+		Regression (slope )& 1 & SSM = $\dfrac{S_{xy}^2}{S_{xx}}$ & MSM = SSM & F = $\dfrac{\text{MSM}}{\text{MSE}} $\\
+		Residual & n - 2 & SSE = $\sum_{i = 1}^n \epsilon_i^2 $ & MSE = $\dfrac{\text{SSE}}{n - 2}$ & \\
+		\hline
+		Total & n - 1 & SST = $\sum_{i = 1}^n (y_i - \bar{y})$ & & \\
+		\hline
+	\end{tabular}
+\caption{ANOVA table for simple linear regression }
+\label{table: Reg-ANOVA}
+\end{table}
+\begin{remark}
+	$$S^2 = \text{MSE} $$
+\end{remark}
+\begin{df}[\textbf{Coefficient of determination:  }] 
+	\begin{equation}\label{eq: r2}
+		r^2 = \dfrac{\text{Regression sum of squares}}{\text{Total sum of squares}} = \dfrac{\sum_{i = 1}^n (\hat{y}_i - \bar{y})^2}{\sum_{i = 1}^n (y_i - \bar{y})^2} = \dfrac{S_{xy}^2}{S_{xx} S_{xy}}
+	\end{equation}
+\end{df}
+$r^2$ is used to quantify how well the fitted line describes the data. It measures the proportion of the total variation in $y_1, \dots y_n$ (measured by $S_{yy}$, which is the total sum of squares) that is explained by the fitted line (measured by regression sum of squares). From \ref{eq: SST}, we know that $ 0 \leq r^2 \leq 1$, and:
+\begin{enumerate}
+	\item  If $y_1 = \hat{y}_1, \dots, y_n = \hat{y}_n$, $r^2 = 1$
+	\item If $y_1, \dots, y_n$ are not close to the line, which means that  the residual sum of squares are large and $r^2 \approx 0$. 
+\end{enumerate}
+\begin{remark}
+	$r^2$ does not take into account the size of the data. Also, it only describes how good the fit is, but it does not say anything about how good the prediction may be.
+\end{remark}
+Moreover, using \ref{eq: beta-t}, we can construct $100(1 - \alpha)\%$ confidence interval for $\beta$:
+$$\hat{\beta} - t_{n - 1, \alpha/2} \dfrac{S}{\sqrt{S_{xx}}} < \beta < \hat{\beta} + t_{n - 1, \alpha/2} \dfrac{S}{\sqrt{S_{xx}}}   $$
+Also, a level $\alpha$ test of $H_0: \beta = \beta_0$ versus $\beta \neq \beta_0$ rejects $H_0$ if
+$$\left|\dfrac{\hat{\beta } - \beta_0}{S / \sqrt{S_{xx}}} \right| > t_{n - 2, \alpha/2}$$
+\subsection{Estimation and Prediction: }
+After observing the regression data $(x_1, y_1), \dots (x_n, y_n) $, and estimating $\alpha, \beta$ and $\sigma$, we will want to predict new observation $Y = y_0$ from new data $x= x_0$ or even estimate to mean of the population, from which $Y_0$ will be drawn. 
+\textbf{Estimation: } Consider estimating the mean of the $Y$ population associated with $x_0$, that is
+$$E(Y|x_0) = \alpha + \beta x_0 $$
+Using our linear regression model, it is obvious that $\hat{\alpha} + \hat{\beta} x_0$ is an unbiased estimator for $E(Y|x_0)$:
+$$E(\hat{\alpha} + \hat{\beta} x_0 ) = E(\hat{\alpha} + x_0 E(\hat{\beta})) = \alpha + \beta $$
+Also, by theorem \ref{thm: param dist}, we have
+\begin{align*}
+	\text{Var}(\hat{\alpha} + \hat{\beta} x_0) & =  \text{Var}(\hat{\alpha}) + x_0^2 \text{Var}(\hat{\beta}) + 2x_0 \text{Cov}(\hat{\alpha}, \hat{\beta})\\
+		&=   \dfrac{\sigma^2}{n S_{xx}}  \sum_{i = 1}^n x_i^2 + x_0^2 \dfrac{\sigma^2}{S_{xx}} - 2x_0  \dfrac{\sigma^2\bar{x}}{S_{xx}}  \\
+		& = \dfrac{\sigma^2}{S_{xx}}  \left(   \dfrac{1}{n} \sum_{i = 1}^n x_i^2 + x_0^2 - 2x_0 \bar{x}
+		   \right) \\
+		   & = \dfrac{\sigma^2}{S_{xx}} \left( \dfrac{1}{n} \left[  \sum_{i = 1}^n x_i^2 - \dfrac{1}{n} \left(\sum_{i = 1}^n x_i\right)^2  \right] + (x_0 - \bar{x})^2
+		   \right) \\
+		   & = \sigma^2 \left( \dfrac{1}{n} + \dfrac{(x_0 - \bar{x})^2}{S_{xx}}\right)
+\end{align*}
+The last "=" is derived by 
+$$  \sum_{i = 1}^n x_i^2 - \dfrac{1}{n} \left(\sum_{i = 1}^n x_i\right)^2  = S_{xx}$$
+Finally, $\hat{\alpha}$ and $\hat{\beta}$ are linear functions of $Y_1, \dots, Y_n$, so is $\hat{\alpha} + \hat{\beta} x_0$. And by assumption, $Y_1, \dots, Y_n$ follow normal distribution, we then end up with the distribution of $\hat{\alpha} + \hat{\beta} x_0$ as follow: 
+$$\hat{\alpha} + \hat{\beta} x_0 \sim N \left(\alpha + \beta x_0, \sigma^2 \left(\dfrac{1}{n} + \dfrac{(x_0 - \bar{x})^2}{S_{xx}}\right)\right) $$
+
+Moreover, by theorem \ref{thm: param dist}, $(\hat{\alpha}, \hat{\beta})$ are independent of $S^2$, therefore:
+$$\dfrac{\hat{\alpha} + \hat{\beta} x_0 - (\alpha +\beta x_0)}{S\sqrt{\frac{1}{n} + \frac{(x_0 - \bar{x})^2}{S_{xx}}}} \sim t_{n - 2} $$
+
+\textbf{Prediction:  } we will give a prediction interval on a random variable, not a parameter. We assume the new observation $Y_0$ to be taken at $x = x_0$, independent of previous data, thus $Y_0$ is independent of $\hat{\alpha}, \hat{\beta}, S$, by previous discussion, we know $Y_0 - \hat{\alpha} - \hat{\beta } x_0$ has normal distribution with mean 0, and 
+$$\text{Var}(Y_0 - \hat{\alpha} - \hat{\beta} x_0) = \text{Var}(Y_0) + \text{Var}(\hat{\alpha} + \hat{\beta}x_0) = \sigma^2 + \sigma^2 \left( \dfrac{1}{n} + \dfrac{(x_0 - \bar{x})^2}{S_{xx}}\right) $$
+Using the independence of $S^2$ and $Y_0 - (\hat{\alpha} + \hat{\beta} x_0)$, we see that
+$$T = \dfrac{Y_0 - (\hat{\alpha} + \hat{\beta} x_0)}{S\sqrt{1 + \frac{1}{n} + \frac{(x_0 - \bar{x})^2}{S_{xx}}}} $$
+Intuitively, random variable is more variable that a parameter, therefore, prediction gives larger variation than estimation. 
+
+\subsection{Matrix Approach: }
+	Simple linear regression model can be written as the form of matrices:
+	$$Y_{n \times 1} = X_{n \times 2}\beta_{2 \times 1} + \epsilon_{n \times 1}, \text{ with } \epsilon \sim N_{n} \left(0, \sigma^2 I_n\right) $$
+The best linear unbiased estimate for $\beta$ is 
+\begin{equation}\label{eq: beta-matrix}
+	\hat{\beta } = (X'X)^{-1} X' Y
+\end{equation}
+and let 
+\begin{equation}\label{eq: y_hat-matrix}
+	\hat{Y} = X \hat{\beta} =  X  (X'X)^{-1} X' Y = \big[X(X'X)^{-1} X' \big] Y = H  Y
+\end{equation}
+where
+\begin{equation}\label{eq: H}
+	H_{n \times n } = X(X'X)^{-1} X'
+\end{equation}
+\begin{thm}[Properties of H]
+	We have following observations about matrix $H$:
+	\begin{enumerate}
+		\item $H$ is symmetric. In fact,
+		$$H' = \big(X(X'X)^{-1} X' \big)' = X'' \big[(X'X)^{-1}\big]'X' = X(X'X)X' = H $$
+		\item $H^2 = H $ (i.e $H$ is an idempotent matrix):
+		\begin{align*}
+			H^2 & = X(X'X)^{-1} X' X(X'X)^{-1} X' = X (X'X)^{-1}  I_{2, 2}X' = H
+		\end{align*}
+	\item $I - H$ is also symmetric:
+	 $$(I - H)' = I' - H' = I - H $$
+	 \item $(I - H)^2 = I - H$ (i.e $I - H$ is an idempotent matrix):
+	 $$(I - H)^2 = (I - H)(I - H) = I - H - H + H^2 = I - 2H + H = I -H $$
+	\end{enumerate}
+\end{thm}
+
+Now, consider the residual sum of squares:
+\begin{equation}\label{eq: RSS-matrix}
+	\text{SSE} = (Y - \hat{Y})'(Y - \hat{Y}) = Y'(I - H)' (I - H) Y = Y' (I - H) Y
+\end{equation}
+
+The total sum of squares is:
+\begin{equation}\label{eq: SST-matrix}
+ 	\text{SST} = Y' \left(I - \dfrac{1}{n} I_n I_n'\right) Y
+\end{equation}
+and the regression sum of square is:
+\begin{equation}
+	\text{SSM} = Y' \left(H - \dfrac{1}{n} I I'\right)Y
+\end{equation}
+And finally, we can derive that
+$$\text{STT} = \text{SSE} + \text{SSM} $$
+An unbiased estimate for $\sigma^2$ is:
+\begin{equation}\label{eq: s2-matrix}
+	S^2 = \text{MSE} = \dfrac{1}{n - 2} Y' (I - H) Y
+\end{equation}
+
+
+\section{Multiple regression: }
+Suppose we want to model one response $y$ as a function of several $k$ independent variables $x_1, \dots x_k$.
+The collected data can be described as the table below: 
+	\begin{table}[h]
+		\centering
+		\begin{tabular}{p{1.5cm} | p{1.5cm}| p{1.5cm} p{1.5cm} p{1.5cm} p{1.5cm}| } 
+			Obs & $y$ & $x_1$ & $x_2$ & $\dots$ & $x_k$ \\
+			\hline
+			1 & $y_1$ & $x_{11}$ & $x_{12}$ & $\dots $ & $x_{1k}$ \\
+			2 &  $y_2$ & $y_{21} $ & $y_{22}$ & $\dots $ &  $x_{2k}$ \\
+			$\dots$ & $\dots$ & $\dots$ &$\dots$ &$\dots$ & $\dots$ \\
+			$n$ & $y_n$ & $x_{n1}$ & $x_{n2} $ & $\dots $ & $y_{nk}$  
+		\end{tabular}
+		\caption{Data of Multiple regression}
+		\label{table: mul-reg}
+	\end{table}
+
+Thus, for the $i^{th}$ observation, we have:
+$$y_i = \beta_0 + \beta_1x_{i1} + \beta_2 x_{i2} + \dots \beta_{k} x_{ik} + \epsilon_i $$
+
+Under the assumption that $\epsilon_i \sim N(0, \sigma^2), \forall i = 1, \dots n $ are independent, we obtain the model: 
+$$EY_i = \beta_0 + \beta_1x_{i1} + \beta_2 x_{i2} + \dots \beta_{k} x_{ik}  $$
+In short, it can be written as
+$$EY = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots \beta_k x_k  $$
+\begin{remark}
+	This model can be interpreted in various context:  For example, suppose there are 2 independent variables $x_1$ and $x_2$:
+	\begin{enumerate}
+		\item There is an interaction between $x_1$ and $x_2$, then the model is 
+		$$Y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_1 x_2 +\epsilon$$
+		\item If the model is non-linear and we can approximate by a polynomial, then 
+		$$Y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_1^2 + \beta_4 x_2^2 + \epsilon$$
+		\item The full model with interaction terms is:
+		$$Y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_1^2 + \beta_4 x_2^2 + \beta_5 x_1 x_2 $$
+		\item Model with transformed variable:
+		$$Y = \beta_0 + \beta_1 \ln x_1 + \beta_2 e^{x_2} + \epsilon $$
+		which can be written as 
+		$$Y = \beta_0 + \beta_1 x_1^* + \beta_2 x_2^* , \text{ where } x_1^*  = \ln x_1 \text{ and } x_2^* = e^{x_2}$$
+		\item Or, if we want to compare the treatments effect in an experiment of 2 level $A$ and $B$, we can add extra variable to indicate where the observation from:
+		$$Y = \beta_0 + \beta_1 x_1 + \beta_2 x+ 2 + \beta_3 x_3 + \epsilon, \text{ where } x_3 = \begin{cases}
+			1 , \text{ if level A} \\ 0, \text{ if level B}
+		\end{cases} $$
+		This single model can yield 2 models, one for each lab;
+		\begin{itemize}
+			\item For lab A:
+			$$Y = (\beta_0 + \beta_3)  + \beta_1 x_1 + \beta_2 x_2 \epsilon$$
+			\item For lab B:
+			$$Y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 +\epsilon $$
+		\end{itemize}
+	\end{enumerate}
+\end{remark}
+By matrix approach, we are able to obtain the model of $Y$ depending on many predictors variables $x_1, \dots x_k$ as follow:
+$$Y_{n \times 1} = X_{n \times (k + 1) } \beta_{(k + 1) \times 1} + \epsilon_{n \times 1} \text{ with } \epsilon \sim N_n\left(0, \sigma^2 I_n\right) $$
+Denote $p = k+1$, then:
+$$Y_{n \times 1} = X_{n \times p } \beta_{p \times 1} + \epsilon_{n \times 1} \text{ with } \epsilon \sim N_n\left(0, \sigma^2 I_n\right)  $$
+
+\begin{remark} We have the following observations:
+	\begin{enumerate}
+		\item The $0^{th}$ column of $X$ is constant, corresponding to the intersection and other $i^{th}$ of $X$ contains data on $x_i$ predictors, where $i = 1, \dots k$.
+		\item $ Y = X\beta + \epsilon$, thus
+		$$Y \sim N_n (X\beta, \sigma^2 I_n) $$ which means that components $y_1, \dots y_n$ are all independent but not identically distributed.
+		\item From now we assume that $X$ is of full rank matrix: $R(X) = p$
+	\end{enumerate}
+\end{remark}
+
+\subsection{Least square model: }
+Using the same approach in Simple linear Regression, we want to minimized the residual sum of square, which is:
+$$\text{SSE} = (Y - \hat{Y})'(Y - \hat{Y}) = (Y - X\beta)'(Y - X\beta) $$
+i.e 
+\begin{equation}\label{eq: mini-beta}
+	\min_{\beta}  (Y - X\beta)'(Y - X\beta) 
+\end{equation}
+We have 
+\begin{align*}
+	(Y - X\beta)'(Y - X\beta) &= Y'(Y - X\beta) - \beta'X'(Y - X\beta) \\
+	&  =Y'Y - Y'X\beta - \beta'X'Y + \beta' X'X \beta \\
+	& = Y'Y - 2 Y'X \beta + \beta'X'X \beta\\
+\end{align*}
+We have:\\
+\begin{enumerate}
+	\item $Y'{1 \times n} X_{ n \times p} \beta_{p \times 1}$ and $\beta'_{1 \times p} X'_{p \times n} Y_{n \times 1}$, therefore they can be combined.
+	\item $X'X$ is a semi-positive definite and symmetric matrix, then $\beta'(X'X) \beta$ is as quadratic form.
+\end{enumerate}
+Therefore 
+\begin{align*}
+	& \dfrac{\partial }{\partial \beta} \big( (Y - X\beta)'(Y - X\beta) \big)  =  0 \\
+	& \Leftrightarrow - 2X'Y + 2 X'X \beta  = 0 \\
+	& \Leftrightarrow X'X \beta = X'Y
+\end{align*}
+This system has unique solution if and only if $X'X$ has it inverse. Under the assumption of $R(X) = p$, we know that $R(X'_{p \times n} X_{n \times p}) = p$, it means $X'X$ is a full rank matrix, which is invertible.
+Therefore 
+\begin{equation}
+	\hat{\beta } =  (X'X)^{-1} X'Y\label{eq: beta-matrix}
+\end{equation}
+$\hat{\beta}$ is a linear combination of vector $Y \sim N_n( X\beta , \sigma^2 I_n)$, using theorem \ref{thm: properties} we obtain 
+$$ \hat{\beta} \sim N \bigg((X'X)^{-1} X'X \beta, (X'X)^{-1} X' \sigma^2 I_n ((X'X)^{-1} X')'\bigg)$$
+i.e $$ \hat{\beta} \sim N\bigg(\beta,  \sigma^2 (X'X)^{-1}\bigg)$$
+ In conclusion, we have the following theorem
+\begin{thm} $\hat{\beta}$ is a unbiased estimator for $\beta$: 
+	\begin{enumerate}
+		\item $\hat{\beta} \sim N(\beta, \sigma^2 (X'X)^{-1})$
+		\item $\text{Var}(\hat{\beta}_i) = \sigma^2 \left[(X'X)^{-1}\right]_{ii}, \forall i = 1, \dots k$
+		\item The estimators of $\beta_i$ and $\beta_j$ are correlated: $\text{Cov}(\hat{\beta}_i, \hat{\beta}_j) = \sigma^2\left[(X'X)^{-1}\right]_{ij}$
+	\end{enumerate}
+\end{thm}
+Now, the predicted value of $Y$, using least square model is 
+$$\hat{Y} = X\hat{\beta} = X (X'X)^{-1} X'Y = HY, \text{ where } H = X(X'X)^{- 1} X'$$
+matrix $H$ is called \textit{"hat-matrix"}.
+\begin{df}[\textbf{Residual vector: }] 
+	$$e = Y - \hat{Y} = Y - H Y = (I - H)Y $$
+\end{df}
+\begin{thm}[Properties of hat-matrix] Recall that $H = X_{n \times p}(X'X)^{-1}_{p \times p} X'_{p \times n }$, then we have
+	
+	\begin{enumerate}
+		\item Using the fact that $R(AB) \leq R(A), \text{ for ant matrix } A$, we have: $R(H) \leq R(X)$, which means that $n \leq p$.  If $n > p$, then $H$ is not a  non-singular matrix, and its inverse does not exists.
+		\item $H$ and $I - H$  are idempotent matrix.
+		\item $\text{Rank}(H) = p$ and $\text{Rank}(I - H) = n - p$.
+	\end{enumerate}
+\end{thm}
+The last item can be derived as follow: Since $H$ is idempotent, we have 
+$$\text{Rank}(H) = \text{Tr}(H) $$
+Then 
+\begin{align*}
+	\text{Tr}(H) & = \text{Tr}\big(X(X'X)^{-1} X'\big) \\
+	& = \text{Tr}\big( X'X(X'X)^{-1}  \big)  (\text{ because }\text{Tr}(AB) = \text{Tr}(BA)) \\
+	& = \text{Tr}(I_p) = p
+\end{align*}
+And finally,
+\begin{align*}
+	\text{Tr}(I - H) & = \text{Tr}(I) - \text{Tr}(H) = n - p
+\end{align*}
+
+\begin{thm}[\textbf{Estimate of $\sigma^2$}] 
+	$$\hat{\sigma}^2 = \dfrac{e'e}{n - p} = \dfrac{\text{SSE}}{n - p} = \text{MSE}$$ is an unbiased estimator of $\sigma^2$ and 
+	$$\dfrac{\hat{\sigma}^2}{\sigma^2} ~ \sim \chi^2_{n - 1}$$
+\end{thm}
+
+From knowledge about distribution of $\hat{\beta}$ and $\hat{\sigma}^2$, we can derive the tests $\beta_i, i = 1, \dots k$:
+$$\begin{cases}
+	H_0: \beta_i = 0 \\ H_1: \beta_i \neq 0
+\end{cases} $$
+Under $H_0$, the test statistic 
+$$\dfrac{\hat{\beta}_i}{\sqrt{\text{MSE} \big((X'X)^{-1}\big)_{ii}}}  \sim t_{n - p}$$
+then rejection region is $|t| > t_{\alpha/2, n - p}$.
+
+For the test of model
+$$\begin{cases}
+	H_0: \beta_1 = \dots = \beta_k = 0 \\ H_1: \text{at least } \beta_i's \text{ not } 0
+\end{cases} $$ we use the following test statistic
+$$ F = \dfrac{\text{MSM}}{\text{MSE}} \sim F_{p-1, n - p}$$
+
+\textbf{Regression ANOVA table: }The formulas of how we derive test statistic is summarized in table \ref{table: Reg-ANOVA-full}.
+\begin{table}[h]
+	\centering
+	\begin{tabular}{c c c c c } 
+		\hline
+		Sum of variation & df & Sum of squares & Mean square & F statistic \\
+		\hline
+		Regression & p -1 & SSM & MSM = $\dfrac{\text{SSM}}{p - 1}$ & F = $\dfrac{\text{MSM}}{\text{MSE}} $\\
+		Residual & n - p & SSE  & MSE = $\dfrac{\text{SSE}}{n - p}$ & \\
+		\hline
+		Total & n - 1 & SST & & \\
+		\hline
+	\end{tabular}
+	\caption{ANOVA table for simple linear regression }
+	\label{table: Reg-ANOVA-full}
+\end{table}
+
+\begin{df}[\textbf{(Coefficient of determination: )}]
+	$$r^2 = \dfrac{\text{SSM}}{\text{SST}} = 1 - \dfrac{\text{SSE}}{\text{SST}}$$
+\end{df}
+
+
+\section{Appendix: }
+\subsection{t-distribution: }
+Let $Z \sim N(0, 1)$ and $U \sim \chi_\nu^2$ be independent. Then a $t$-random variable can be defined as follow:
+$$T = \dfrac{Z}{\sqrt{\frac{U}{\mu}}}  \sim t_{\mu}$$ 
+In fact, when we want to test the hypothesis:
+$$\begin{cases}
+	H_0: & \nu = \nu_0 \\ H_1: & \mu \neq \mu_0
+\end{cases} $$
+the test statistic under $H_0$ is: 
+$$Z = \dfrac{\bar{X} - \mu_0}{\frac{\sigma}{\sqrt{n}}} \sim N(0, 1) $$ In many cases,  $\sigma^2$ is unknown, therefore an estimate of $\sigma^2$ is used:
+$$S^2 = \dfrac{1}{n - 1} \sum_{i = 1}^n (x_i - \bar{x})^2 $$
+which implies the test statistic 
+$$\dfrac{\bar{X} - \mu_0}{\frac{S}{\sqrt{n}}}  \sim t_{n - 1}$$ by theorem  \ref{thm: properties}.
+
+\subsection{F-distribution: } 
+Let $U_1 \sim \chi^2_{\nu_1}$ and $U_2\sim \chi^2_{\nu_2} $ be independent, then a $F$-random variable can be defined as follow:
+$$F = \dfrac{U_1/ \nu_1}{V_2 / \nu_2}  \sim F_{\nu_1, \nu_2}$$
+In fact, if we have  two normal distribution $N(\mu_1, \sigma_1^2)$ and $N(\mu_1, \sigma_2^2)$ corresponding to $n$ and $m$ data points, and want to test: 
+$$\begin{cases}
+	H_0: & \sigma_1^2 = \sigma_2^2 \\ H_1: & \sigma_1^2 \neq \sigma_2^2
+\end{cases} $$
+The test statistic 
+$$ \dfrac{S_1^2}{S_2^2} \sim F_{n-1, m - 1} \text{ under } H_0$$ 
+
+	\newpage
+	\bibliographystyle{plain}
+	\bibliography{biblist}
+	
+\end{document}
